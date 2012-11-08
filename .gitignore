@@ -1,0 +1,13 @@
+# Gradle
+.gradle/
+build/
+
+# Libraries
+/lib/
+
+# Testing
+/run/
+
+# Eclipse
+.settings/
+bin/

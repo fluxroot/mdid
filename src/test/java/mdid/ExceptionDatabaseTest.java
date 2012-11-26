@@ -18,30 +18,43 @@
 */
 package mdid;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Path;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * @author Phokham Nonava
  */
-public class Mdid {
+public class ExceptionDatabaseTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(Mdid.class);
-
-	public static void main(String[] args) {
-		try {
-			Configuration.getInstance().parseArgumens(args);
-
-			AbstractOperationMode mode = Configuration.getInstance().mode;
-			Files.walkFileTree(Configuration.getInstance().path, mode);
-			mode.doFinal();
-		} catch (NoSuchAlgorithmException | IOException e) {
-			logger.error("An error occured: {}", e.getLocalizedMessage());
+	private static Path exceptionFile = null;
+	
+	@BeforeClass
+	public static void beforeClass() throws IOException {
+		exceptionFile = Files.createTempFile("mdid", null);
+		
+		try (BufferedWriter bufferedWriter = Files.newBufferedWriter(exceptionFile, Charset.defaultCharset())) {
+			bufferedWriter.write("a/path");
+			bufferedWriter.newLine();
 		}
 	}
-
+	
+	@AfterClass
+	public static void afterClass() throws IOException {
+		Files.delete(exceptionFile);
+	}
+	
+	@Test
+	public void testExceptionDatabase() throws IOException {
+		ExceptionDatabase database = new ExceptionDatabase(exceptionFile);
+		Assert.assertTrue(database.contains("a/path"));
+	}
+	
 }

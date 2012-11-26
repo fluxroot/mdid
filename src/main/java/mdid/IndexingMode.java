@@ -19,8 +19,11 @@
 package mdid;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,20 +31,28 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Phokham Nonava
  */
-public class Mdid {
+public class IndexingMode extends AbstractOperationMode {
 
-	private static final Logger logger = LoggerFactory.getLogger(Mdid.class);
+	private static final Logger logger = LoggerFactory.getLogger(IndexingMode.class);
+	
+	public IndexingMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
+		super(hashFile, exceptionFile);
+	}
+	
+	@Override
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+		Objects.requireNonNull(file);
+		Objects.requireNonNull(attrs);
 
-	public static void main(String[] args) {
-		try {
-			Configuration.getInstance().parseArgumens(args);
-
-			AbstractOperationMode mode = Configuration.getInstance().mode;
-			Files.walkFileTree(Configuration.getInstance().path, mode);
-			mode.doFinal();
-		} catch (NoSuchAlgorithmException | IOException e) {
-			logger.error("An error occured: {}", e.getLocalizedMessage());
+		if (exceptionDatabase.contains(file.toString())) {
+			logger.info("{} {}", SKIPPING, file.toString());
+		} else {
+			String hash = getHash(file);
+			hashDatabase.putAndMark(file.toString(), hash);
+			logger.info("{} {}", NEW, file.toString());
 		}
+		
+		return FileVisitResult.CONTINUE;
 	}
 
 }

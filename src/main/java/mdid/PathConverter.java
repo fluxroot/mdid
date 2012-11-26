@@ -18,30 +18,29 @@
 */
 package mdid;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import joptsimple.ValueConverter;
 
 /**
  * @author Phokham Nonava
  */
-public class Mdid {
+public class PathConverter implements ValueConverter<Path> {
 
-	private static final Logger logger = LoggerFactory.getLogger(Mdid.class);
+	@Override
+	public Path convert(String value) {
+		return Paths.get(value);
+	}
 
-	public static void main(String[] args) {
-		try {
-			Configuration.getInstance().parseArgumens(args);
+	@Override
+	public Class<Path> valueType() {
+		return Path.class;
+	}
 
-			AbstractOperationMode mode = Configuration.getInstance().mode;
-			Files.walkFileTree(Configuration.getInstance().path, mode);
-			mode.doFinal();
-		} catch (NoSuchAlgorithmException | IOException e) {
-			logger.error("An error occured: {}", e.getLocalizedMessage());
-		}
+	@Override
+	public String valuePattern() {
+		return null;
 	}
 
 }

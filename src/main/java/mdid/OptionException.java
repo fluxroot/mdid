@@ -18,30 +18,18 @@
 */
 package mdid;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Phokham Nonava
  */
-public class Mdid {
+public class OptionException extends RuntimeException {
 
-	private static final Logger logger = LoggerFactory.getLogger(Mdid.class);
+	private static final long serialVersionUID = 1L;
 
-	public static void main(String[] args) {
-		try {
-			Configuration.getInstance().parseArgumens(args);
-
-			AbstractOperationMode mode = Configuration.getInstance().mode;
-			Files.walkFileTree(Configuration.getInstance().path, mode);
-			mode.doFinal();
-		} catch (NoSuchAlgorithmException | IOException e) {
-			logger.error("An error occured: {}", e.getLocalizedMessage());
-		}
+	public OptionException() {
 	}
-
+	
+	public OptionException(String message) {
+		super(message);
+	}
+	
 }

@@ -1,22 +1,3 @@
-/*
-** Copyright 2012 Phokham Nonava
-**
-** This file is part of Message Digest Integrity Database.
-**
-** Message Digest Integrity Database is free software: you can redistribute it and/or modify
-** it under the terms of the GNU Lesser General Public License as published by
-** the Free Software Foundation, either version 3 of the License, or
-** (at your option) any later version.
-**
-** Message Digest Integrity Database is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-** GNU Lesser General Public License for more details.
-**
-** You should have received a copy of the GNU Lesser General Public License
-** along with Message Digest Integrity Database.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 apply plugin: 'java'
 
 description = 'Message Digest Integrity Database'
@@ -27,17 +8,23 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 repositories {
-	flatDir {
-		dirs 'lib'
-	}
 	mavenCentral()
 }
 
+configurations {
+	eclipse {
+		extendsFrom compile
+	}
+}
+
 dependencies {
-	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.2'
-	compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.2'
-	compile group: 'net.sf.jopt-simple', name: 'jopt-simple', version: '4.3'
-	testCompile group: 'junit', name: 'junit', version: '4.+'
+	compile 'org.slf4j:slf4j-api:1.7.2'
+	eclipse 'org.slf4j:slf4j-api:1.7.2:sources'
+	compile 'org.slf4j:slf4j-simple:1.7.2'
+	eclipse 'org.slf4j:slf4j-simple:1.7.2:sources'
+	compile 'net.sf.jopt-simple:jopt-simple:4.3'
+	eclipse 'net.sf.jopt-simple:jopt-simple:4.3:sources'
+	testCompile 'junit:junit:4.+'
 }
 
 jar {
@@ -48,6 +35,11 @@ jar {
     manifest {
         attributes 'Implementation-Title': group, 'Implementation-Version': version, 'Main-Class': 'mdid.Mdid'
     }
+}
+
+task libs(type: Sync) {
+	from configurations.eclipse
+	into "$projectDir/lib"
 }
 
 task dist(type: Zip) {

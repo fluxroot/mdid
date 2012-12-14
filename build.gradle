@@ -12,18 +12,18 @@ repositories {
 }
 
 configurations {
-	eclipse {
+	eclipselibs {
 		extendsFrom compile
 	}
 }
 
 dependencies {
 	compile 'org.slf4j:slf4j-api:1.7.2'
-	eclipse 'org.slf4j:slf4j-api:1.7.2:sources'
+	eclipselibs 'org.slf4j:slf4j-api:1.7.2:sources'
 	compile 'org.slf4j:slf4j-simple:1.7.2'
-	eclipse 'org.slf4j:slf4j-simple:1.7.2:sources'
+	eclipselibs 'org.slf4j:slf4j-simple:1.7.2:sources'
 	compile 'net.sf.jopt-simple:jopt-simple:4.3'
-	eclipse 'net.sf.jopt-simple:jopt-simple:4.3:sources'
+	eclipselibs 'net.sf.jopt-simple:jopt-simple:4.3:sources'
 	testCompile 'junit:junit:4.+'
 }
 
@@ -38,7 +38,7 @@ jar {
 }
 
 task libs(type: Sync) {
-	from configurations.eclipse
+	from configurations.eclipselibs
 	into "$projectDir/lib"
 }
 

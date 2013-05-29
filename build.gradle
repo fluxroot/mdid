@@ -1,62 +1,73 @@
-apply plugin: 'java'
+allprojects {
+	apply plugin: 'base'
+	
+	group = 'mdid'
+	
+	repositories {
+		mavenCentral()
+	}
 
-description = 'Message Digest Integrity Database'
+	configurations {
+		eclipselibs {
+			extendsFrom compile
+		}
+	}
 
-group = 'mdid'
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
-repositories {
-	mavenCentral()
-}
-
-configurations {
-	eclipselibs {
-		extendsFrom compile
+	task libs(type: Sync) {
+		from configurations.eclipselibs
+		into "$projectDir/lib"
 	}
 }
 
-dependencies {
-	compile 'org.slf4j:slf4j-api:1.7.2'
-	eclipselibs 'org.slf4j:slf4j-api:1.7.2:sources'
-	compile 'org.slf4j:slf4j-simple:1.7.2'
-	eclipselibs 'org.slf4j:slf4j-simple:1.7.2:sources'
-	compile 'net.sf.jopt-simple:jopt-simple:4.3'
-	eclipselibs 'net.sf.jopt-simple:jopt-simple:4.3:sources'
-	testCompile 'junit:junit:4.+'
-}
-
-jar {
-	from {
-		configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
+configure(rootProject) {
+	apply plugin: 'java'
+	
+	description = 'Message Digest Integrity Database'
+	
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+	
+	dependencies {
+		compile 'org.slf4j:slf4j-api:1.7.+'
+		compile 'org.slf4j:slf4j-log4j12:1.7.+'
+		compile 'log4j:log4j:1.2.+'
+		compile 'net.sf.jopt-simple:jopt-simple:4.3'
+		
+		testCompile 'junit:junit:4.+'
 	}
-	from sourceSets.main.allJava
-    manifest {
-        attributes 'Implementation-Title': group, 'Implementation-Version': version, 'Main-Class': 'mdid.Mdid'
-    }
-}
+	
+	jar {
+		from {
+			configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
+		}
+		from sourceSets.main.allJava
+		manifest {
+			attributes 'Implementation-Title': project.group, 'Implementation-Version': project.version, 'Main-Class': 'mdid.Mdid'
+		}
+	}
+	
+	task dist(type: Zip) {
+		def baseDir = "${project.name}-${project.version}"
+		
+		into ("$baseDir") {
+			from 'README.md'
+			from 'COPYING'
+			from 'COPYING.LESSER'
+			from jar
+		}
+	}
 
-task libs(type: Sync) {
-	from configurations.eclipselibs
-	into "$projectDir/lib"
-}
-
-task dist(type: Zip) {
-	def baseDir = "${project.name}-${project.version}"
-
-	into ("$baseDir") {
-		from 'README.md'
-		from 'COPYING'
-		from 'COPYING.LESSER'
-		from jar
+	artifacts {
+		archives dist
+	}
+	
+	task wrapper(type: Wrapper) {
+		gradleVersion = '1.5'
 	}
 }
 
-artifacts {
-	archives dist
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '1.2'
+def downloadFile(srcUrl, destUrl) {
+	def dest = new BufferedOutputStream(new FileOutputStream(destUrl))
+	dest << new URL(srcUrl).openStream()
+	dest.close()
 }

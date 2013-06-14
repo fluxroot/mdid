@@ -1,7 +1,5 @@
-Message Digest Integrity Database
+Message Digest Integrity Database [![Build Status](https://travis-ci.org/fluxroot/mdid.png)](https://travis-ci.org/fluxroot/mdid)
 =================================
-
-[![Build Status](https://travis-ci.org/fluxroot/mdid.png)](https://travis-ci.org/fluxroot/mdid)
 
 Copyright 2012 Phokham Nonava <pn@nonava.com>
 

@@ -34,46 +34,46 @@ import org.slf4j.LoggerFactory;
  */
 public class ExceptionDatabase {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExceptionDatabase.class);
-	
-	private ArrayList<String> table = new ArrayList<>();
+    private static final Logger logger = LoggerFactory.getLogger(ExceptionDatabase.class);
 
-	public ExceptionDatabase() {
-		// Create an empty database
-	}
-	
-	public ExceptionDatabase(Path exceptionFile) throws IOException {
-		Objects.requireNonNull(exceptionFile);
+    private ArrayList<String> table = new ArrayList<>();
 
-		logger.info("Reading exception file {}", exceptionFile.toString());
-		try (BufferedReader bufferedReader = Files.newBufferedReader(exceptionFile, Charset.defaultCharset())) {
-			int count = 0;
+    public ExceptionDatabase() {
+        // Create an empty database
+    }
 
-			String line = bufferedReader.readLine();
-			while (line != null) {
-				line = line.trim();
-				if (!line.equalsIgnoreCase("")) {
-					table.add(line);
-					++count;
-				}
-				
-				line = bufferedReader.readLine();
-			}
-			
-			logger.info("Read {} entries from exception file", count);
-		}
-	}
+    public ExceptionDatabase(Path exceptionFile) throws IOException {
+        Objects.requireNonNull(exceptionFile);
 
-	public boolean contains(String file) {
-		Objects.requireNonNull(file);
+        logger.info("Reading exception file {}", exceptionFile.toString());
+        try (BufferedReader bufferedReader = Files.newBufferedReader(exceptionFile, Charset.defaultCharset())) {
+            int count = 0;
 
-		return table.contains(file);
-	}
-	
-	public void put(String file) {
-		Objects.requireNonNull(file);
-		
-		table.add(file);
-	}
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                line = line.trim();
+                if (!line.equalsIgnoreCase("")) {
+                    table.add(line);
+                    ++count;
+                }
+
+                line = bufferedReader.readLine();
+            }
+
+            logger.info("Read {} entries from exception file", count);
+        }
+    }
+
+    public boolean contains(String file) {
+        Objects.requireNonNull(file);
+
+        return table.contains(file);
+    }
+
+    public void put(String file) {
+        Objects.requireNonNull(file);
+
+        table.add(file);
+    }
 
 }

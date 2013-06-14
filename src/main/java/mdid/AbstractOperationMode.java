@@ -40,7 +40,7 @@ public abstract class AbstractOperationMode extends SimpleFileVisitor<Path> {
 
     protected static final String SKIPPING = "SKIPPING";
     protected static final String NEW =      "NEW     ";
-    protected static final String EQUAL=     "EQUAL   ";
+    protected static final String EQUAL =    "EQUAL   ";
     protected static final String MODIFIED = "MODIFIED";
     protected static final String DELETED =  "DELETED ";
 

@@ -32,7 +32,7 @@ import joptsimple.OptionSpec;
 /**
  * @author Phokham Nonava
  */
-public class Configuration {
+public final class Configuration {
 
     private static final Configuration instance = new Configuration();
 

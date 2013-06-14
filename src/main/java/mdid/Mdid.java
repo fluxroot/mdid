@@ -28,9 +28,12 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Phokham Nonava
  */
-public class Mdid {
+public final class Mdid {
 
     private static final Logger logger = LoggerFactory.getLogger(Mdid.class);
+
+    private Mdid() {
+    }
 
     public static void main(String[] args) {
         try {

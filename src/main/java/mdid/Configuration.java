@@ -34,69 +34,69 @@ import joptsimple.OptionSpec;
  */
 public class Configuration {
 
-	private static final Configuration instance = new Configuration();
-	
-	public AbstractOperationMode mode = null;
-	public Path path = null;
-	
-	private Configuration() {
-	}
+    private static final Configuration instance = new Configuration();
+    
+    public AbstractOperationMode mode = null;
+    public Path path = null;
+    
+    private Configuration() {
+    }
 
-	public static Configuration getInstance() {
-		return instance;
-	}
-	
-	public void parseArgumens(String[] args) throws NoSuchAlgorithmException, IOException {
-		// Build our parser
-		OptionParser parser = new OptionParser();
-		OptionSpec<Path> hashDatabaseArg = parser.accepts("f").withRequiredArg().withValuesConvertedBy(new PathConverter()).defaultsTo(Paths.get(HashDatabase.FILENAME));
-		OptionSpec<Path> exceptionDatabaseArg = parser.accepts("e").withRequiredArg().withValuesConvertedBy(new PathConverter());
-		
-		// Parse arguments
-		OptionSet options = parser.parse(args);
+    public static Configuration getInstance() {
+        return instance;
+    }
+    
+    public void parseArgumens(String[] args) throws NoSuchAlgorithmException, IOException {
+        // Build our parser
+        OptionParser parser = new OptionParser();
+        OptionSpec<Path> hashDatabaseArg = parser.accepts("f").withRequiredArg().withValuesConvertedBy(new PathConverter()).defaultsTo(Paths.get(HashDatabase.FILENAME));
+        OptionSpec<Path> exceptionDatabaseArg = parser.accepts("e").withRequiredArg().withValuesConvertedBy(new PathConverter());
+        
+        // Parse arguments
+        OptionSet options = parser.parse(args);
 
-		// Get the non-option arguments
-		List<String> nonOptionArgs = options.nonOptionArguments();
+        // Get the non-option arguments
+        List<String> nonOptionArgs = options.nonOptionArguments();
 
-		// Check the non-option arguments
-		if (nonOptionArgs.size() < 1) {
-			throw new OptionException("Please specify an operation mode");
-		} else if (nonOptionArgs.size() > 2) {
-			throw new OptionException("Unknown option: " + nonOptionArgs.get(2));
-		}
+        // Check the non-option arguments
+        if (nonOptionArgs.size() < 1) {
+            throw new OptionException("Please specify an operation mode");
+        } else if (nonOptionArgs.size() > 2) {
+            throw new OptionException("Unknown option: " + nonOptionArgs.get(2));
+        }
 
-		// Get the hash database
-		Path hashDatabase = hashDatabaseArg.value(options).normalize();
+        // Get the hash database
+        Path hashDatabase = hashDatabaseArg.value(options).normalize();
 
-		// Get the exception database
-		Path exceptionDatabase = null;
-		if (options.hasArgument(exceptionDatabaseArg)) {
-			exceptionDatabase = exceptionDatabaseArg.value(options).normalize();
-			if (!Files.exists(exceptionDatabaseArg.value(options))) {
-				throw new OptionException("Exception database does not exist: " + exceptionDatabase.toString());
-			}
-		}
+        // Get the exception database
+        Path exceptionDatabase = null;
+        if (options.hasArgument(exceptionDatabaseArg)) {
+            exceptionDatabase = exceptionDatabaseArg.value(options).normalize();
+            if (!Files.exists(exceptionDatabaseArg.value(options))) {
+                throw new OptionException("Exception database does not exist: " + exceptionDatabase.toString());
+            }
+        }
 
-		// Get the operation mode
-		if (nonOptionArgs.get(0).equalsIgnoreCase("index")) {
-			mode = new IndexingMode(hashDatabase, exceptionDatabase);
-		} else if (nonOptionArgs.get(0).equalsIgnoreCase("update")) {
-			mode = new UpdateMode(hashDatabase, exceptionDatabase);
-		} else if (nonOptionArgs.get(0).equalsIgnoreCase("analyze")) {
-			mode = new AnalysisMode(hashDatabase, exceptionDatabase);
-		} else {
-			throw new OptionException("Unknown operation mode: " + nonOptionArgs.get(0));
-		}
-		
-		// Get the path
-		if (nonOptionArgs.size() == 2) {
-			path = Paths.get(nonOptionArgs.get(1)).normalize();
-			if (!Files.exists(path)) {
-				throw new OptionException("File does not exist: " + path.toString());
-			}
-		} else {
-			path = Paths.get(".").normalize();
-		}
-	}
+        // Get the operation mode
+        if (nonOptionArgs.get(0).equalsIgnoreCase("index")) {
+            mode = new IndexingMode(hashDatabase, exceptionDatabase);
+        } else if (nonOptionArgs.get(0).equalsIgnoreCase("update")) {
+            mode = new UpdateMode(hashDatabase, exceptionDatabase);
+        } else if (nonOptionArgs.get(0).equalsIgnoreCase("analyze")) {
+            mode = new AnalysisMode(hashDatabase, exceptionDatabase);
+        } else {
+            throw new OptionException("Unknown operation mode: " + nonOptionArgs.get(0));
+        }
+        
+        // Get the path
+        if (nonOptionArgs.size() == 2) {
+            path = Paths.get(nonOptionArgs.get(1)).normalize();
+            if (!Files.exists(path)) {
+                throw new OptionException("File does not exist: " + path.toString());
+            }
+        } else {
+            path = Paths.get(".").normalize();
+        }
+    }
 
 }

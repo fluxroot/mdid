@@ -33,44 +33,44 @@ import org.slf4j.LoggerFactory;
  */
 public class AnalysisMode extends AbstractOperationMode {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisMode.class);
+    private static final Logger logger = LoggerFactory.getLogger(AnalysisMode.class);
 
-	public AnalysisMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
-		super(hashFile, exceptionFile, false);
-	}
+    public AnalysisMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
+        super(hashFile, exceptionFile, false);
+    }
 
-	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-		Objects.requireNonNull(file);
-		Objects.requireNonNull(attrs);
-		
-		if (exceptionDatabase.contains(file.toString())) {
-			logger.info("{} {}", SKIPPING, file.toString());
-		} else {
-			String oldHash = hashDatabase.get(file.toString());
-			if (oldHash == null) {
-				logger.info("{} {}", NEW, file.toString());
-			} else {
-				String hash = getHash(file);
-				if (hash.equalsIgnoreCase(oldHash)) {
-					logger.info("{} {}", EQUAL, file.toString());
-				} else {
-					logger.info("{} {}", MODIFIED, file.toString());
-				}
-				hashDatabase.mark(file.toString());
-			}
-		}
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Objects.requireNonNull(file);
+        Objects.requireNonNull(attrs);
+        
+        if (exceptionDatabase.contains(file.toString())) {
+            logger.info("{} {}", SKIPPING, file.toString());
+        } else {
+            String oldHash = hashDatabase.get(file.toString());
+            if (oldHash == null) {
+                logger.info("{} {}", NEW, file.toString());
+            } else {
+                String hash = getHash(file);
+                if (hash.equalsIgnoreCase(oldHash)) {
+                    logger.info("{} {}", EQUAL, file.toString());
+                } else {
+                    logger.info("{} {}", MODIFIED, file.toString());
+                }
+                hashDatabase.mark(file.toString());
+            }
+        }
 
-		return FileVisitResult.CONTINUE;
-	}
+        return FileVisitResult.CONTINUE;
+    }
 
-	@Override
-	public void doFinal() {
-		for (String path : hashDatabase.getUnmarked()) {
-			logger.info("{} {}", DELETED, path);
-		}
+    @Override
+    public void doFinal() {
+        for (String path : hashDatabase.getUnmarked()) {
+            logger.info("{} {}", DELETED, path);
+        }
 
-		super.doFinal();
-	}
+        super.doFinal();
+    }
 
 }

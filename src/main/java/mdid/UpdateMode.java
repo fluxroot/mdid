@@ -33,42 +33,42 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdateMode extends AbstractOperationMode {
 
-	private static final Logger logger = LoggerFactory.getLogger(UpdateMode.class);
+    private static final Logger logger = LoggerFactory.getLogger(UpdateMode.class);
 
-	public UpdateMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
-		super(hashFile, exceptionFile, true);
-	}
-	
-	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-		Objects.requireNonNull(file);
-		Objects.requireNonNull(attrs);
-		
-		if (exceptionDatabase.contains(file.toString())) {
-			logger.info("{} {}", SKIPPING, file.toString());
-		} else {
-			String oldHash = hashDatabase.get(file.toString());
-			if (oldHash == null) {
-				String hash = getHash(file);
-				hashDatabase.putAndMark(file.toString(), hash);
-				logger.info("{} {}", NEW, file.toString());
-			} else {
-				hashDatabase.mark(file.toString());
-			}
-		}
+    public UpdateMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
+        super(hashFile, exceptionFile, true);
+    }
+    
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Objects.requireNonNull(file);
+        Objects.requireNonNull(attrs);
+        
+        if (exceptionDatabase.contains(file.toString())) {
+            logger.info("{} {}", SKIPPING, file.toString());
+        } else {
+            String oldHash = hashDatabase.get(file.toString());
+            if (oldHash == null) {
+                String hash = getHash(file);
+                hashDatabase.putAndMark(file.toString(), hash);
+                logger.info("{} {}", NEW, file.toString());
+            } else {
+                hashDatabase.mark(file.toString());
+            }
+        }
 
-		return FileVisitResult.CONTINUE;
-	}
+        return FileVisitResult.CONTINUE;
+    }
 
-	@Override
-	public void doFinal() {
-		for (String path : hashDatabase.getUnmarked()) {
-			logger.info("{} {}", DELETED, path);
-		}
+    @Override
+    public void doFinal() {
+        for (String path : hashDatabase.getUnmarked()) {
+            logger.info("{} {}", DELETED, path);
+        }
 
-		hashDatabase.removeUnmarked();
-		
-		super.doFinal();
-	}
+        hashDatabase.removeUnmarked();
+        
+        super.doFinal();
+    }
 
 }

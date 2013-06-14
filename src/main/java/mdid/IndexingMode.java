@@ -33,26 +33,26 @@ import org.slf4j.LoggerFactory;
  */
 public class IndexingMode extends AbstractOperationMode {
 
-	private static final Logger logger = LoggerFactory.getLogger(IndexingMode.class);
-	
-	public IndexingMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
-		super(hashFile, exceptionFile);
-	}
-	
-	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-		Objects.requireNonNull(file);
-		Objects.requireNonNull(attrs);
+    private static final Logger logger = LoggerFactory.getLogger(IndexingMode.class);
+    
+    public IndexingMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
+        super(hashFile, exceptionFile);
+    }
+    
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Objects.requireNonNull(file);
+        Objects.requireNonNull(attrs);
 
-		if (exceptionDatabase.contains(file.toString())) {
-			logger.info("{} {}", SKIPPING, file.toString());
-		} else {
-			String hash = getHash(file);
-			hashDatabase.putAndMark(file.toString(), hash);
-			logger.info("{} {}", NEW, file.toString());
-		}
-		
-		return FileVisitResult.CONTINUE;
-	}
+        if (exceptionDatabase.contains(file.toString())) {
+            logger.info("{} {}", SKIPPING, file.toString());
+        } else {
+            String hash = getHash(file);
+            hashDatabase.putAndMark(file.toString(), hash);
+            logger.info("{} {}", NEW, file.toString());
+        }
+        
+        return FileVisitResult.CONTINUE;
+    }
 
 }

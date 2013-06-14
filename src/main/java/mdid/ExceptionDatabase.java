@@ -34,46 +34,46 @@ import org.slf4j.LoggerFactory;
  */
 public class ExceptionDatabase {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExceptionDatabase.class);
-	
-	private ArrayList<String> table = new ArrayList<>();
+    private static final Logger logger = LoggerFactory.getLogger(ExceptionDatabase.class);
+    
+    private ArrayList<String> table = new ArrayList<>();
 
-	public ExceptionDatabase() {
-		// Create an empty database
-	}
-	
-	public ExceptionDatabase(Path exceptionFile) throws IOException {
-		Objects.requireNonNull(exceptionFile);
+    public ExceptionDatabase() {
+        // Create an empty database
+    }
+    
+    public ExceptionDatabase(Path exceptionFile) throws IOException {
+        Objects.requireNonNull(exceptionFile);
 
-		logger.info("Reading exception file {}", exceptionFile.toString());
-		try (BufferedReader bufferedReader = Files.newBufferedReader(exceptionFile, Charset.defaultCharset())) {
-			int count = 0;
+        logger.info("Reading exception file {}", exceptionFile.toString());
+        try (BufferedReader bufferedReader = Files.newBufferedReader(exceptionFile, Charset.defaultCharset())) {
+            int count = 0;
 
-			String line = bufferedReader.readLine();
-			while (line != null) {
-				line = line.trim();
-				if (!line.equalsIgnoreCase("")) {
-					table.add(line);
-					++count;
-				}
-				
-				line = bufferedReader.readLine();
-			}
-			
-			logger.info("Read {} entries from exception file", count);
-		}
-	}
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                line = line.trim();
+                if (!line.equalsIgnoreCase("")) {
+                    table.add(line);
+                    ++count;
+                }
+                
+                line = bufferedReader.readLine();
+            }
+            
+            logger.info("Read {} entries from exception file", count);
+        }
+    }
 
-	public boolean contains(String file) {
-		Objects.requireNonNull(file);
+    public boolean contains(String file) {
+        Objects.requireNonNull(file);
 
-		return table.contains(file);
-	}
-	
-	public void put(String file) {
-		Objects.requireNonNull(file);
-		
-		table.add(file);
-	}
+        return table.contains(file);
+    }
+    
+    public void put(String file) {
+        Objects.requireNonNull(file);
+        
+        table.add(file);
+    }
 
 }

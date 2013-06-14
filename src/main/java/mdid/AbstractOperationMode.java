@@ -43,9 +43,9 @@ public abstract class AbstractOperationMode extends SimpleFileVisitor<Path> {
     protected static final String EQUAL=     "EQUAL   ";
     protected static final String MODIFIED = "MODIFIED";
     protected static final String DELETED =  "DELETED ";
-    
+
     private static final Logger logger = LoggerFactory.getLogger(AbstractOperationMode.class);
-    
+
     protected final HashDatabase hashDatabase;
     protected final ExceptionDatabase exceptionDatabase;
     private final MessageDigest messageDigest;
@@ -54,14 +54,14 @@ public abstract class AbstractOperationMode extends SimpleFileVisitor<Path> {
         Objects.requireNonNull(hashFile);
 
         hashDatabase = new HashDatabase(hashFile);
-        
+
         if (exceptionFile == null) {
             exceptionDatabase = new ExceptionDatabase();
         } else {
             exceptionDatabase = new ExceptionDatabase(exceptionFile);
             exceptionDatabase.put(exceptionFile.toString());
         }
-        
+
         exceptionDatabase.put(hashFile.toString());
 
         messageDigest = MessageDigest.getInstance(HashDatabase.MESSAGEDIGEST);
@@ -78,7 +78,7 @@ public abstract class AbstractOperationMode extends SimpleFileVisitor<Path> {
             exceptionDatabase = new ExceptionDatabase(exceptionFile);
             exceptionDatabase.put(exceptionFile.toString());
         }
-        
+
         exceptionDatabase.put(hashFile.toString());
 
         messageDigest = MessageDigest.getInstance(HashDatabase.MESSAGEDIGEST);
@@ -96,7 +96,7 @@ public abstract class AbstractOperationMode extends SimpleFileVisitor<Path> {
             return FileVisitResult.CONTINUE;
         }
     }
-    
+
     protected String getHash(Path file) throws IOException {
         Objects.requireNonNull(file);
 
@@ -104,11 +104,11 @@ public abstract class AbstractOperationMode extends SimpleFileVisitor<Path> {
             byte[] buffer = new byte[1024];
             while (digestInputStream.read(buffer) != -1) {
             }
-            
+
             byte[] hashValue = messageDigest.digest();
             BigInteger bi = new BigInteger(1, hashValue);
             String hash = String.format("%0" + (hashValue.length << 1) + "x", bi);
-            
+
             return hash;
         }
     }

@@ -41,15 +41,15 @@ public class HashDatabase implements Closeable {
 
     public static final String FILENAME = "sha1sum";
     public static final String MESSAGEDIGEST = "SHA-1";
-    
+
     private static final Logger logger = LoggerFactory.getLogger(HashDatabase.class);
-    
+
     private final Path hashFile;
     private final boolean writable;
 
     private Hashtable<String, String> table = new Hashtable<>();
     private Hashtable<String, String> marks = new Hashtable<>();
-    
+
     public HashDatabase(Path hashFile) throws IOException {
         Objects.requireNonNull(hashFile);
 
@@ -62,7 +62,7 @@ public class HashDatabase implements Closeable {
         Files.createFile(hashFile);
         logger.info("Created hash file {}", hashFile.toString());
     }
-    
+
     public HashDatabase(Path hashFile, boolean writable) throws IOException {
         Objects.requireNonNull(hashFile);
 
@@ -74,11 +74,11 @@ public class HashDatabase implements Closeable {
         } else {
             logger.info("Opening database in read only mode");
         }
-        
+
         logger.info("Reading hash file {}", hashFile.toString());
         try (BufferedReader bufferedReader = Files.newBufferedReader(hashFile, Charset.defaultCharset())) {
             int count = 0;
-            
+
             String line = bufferedReader.readLine();
             while (line != null) {
                 // A hash line consists of <hash value> <path>
@@ -87,7 +87,7 @@ public class HashDatabase implements Closeable {
                 if (index != -1) {
                     String hash = line.substring(0, index).trim();
                     String path = line.substring(index).trim();
-                    
+
                     table.put(path, hash);
                     ++count;
                 } else {
@@ -96,7 +96,7 @@ public class HashDatabase implements Closeable {
 
                 line = bufferedReader.readLine();
             }
-            
+
             logger.info("Read {} entries from hash file", count);
         }
     }
@@ -106,10 +106,10 @@ public class HashDatabase implements Closeable {
             logger.info("Writing hash file {}", hashFile.toString());
             try (BufferedWriter bufferedWriter = Files.newBufferedWriter(hashFile, Charset.defaultCharset())) {
                 int count = 0;
-                
+
                 for (Entry<String, String> entry : table.entrySet()) {
                     String line = entry.getValue() + " " + entry.getKey();
-                    
+
                     bufferedWriter.write(line);
                     bufferedWriter.newLine();
                     ++count;
@@ -117,36 +117,36 @@ public class HashDatabase implements Closeable {
 
                 for (Entry<String, String> entry : marks.entrySet()) {
                     String line = entry.getValue() + " " + entry.getKey();
-                    
+
                     bufferedWriter.write(line);
                     bufferedWriter.newLine();
                     ++count;
                 }
-                
+
                 logger.info("Wrote {} entries to the hash file", count);
             }
         }
     }
-    
+
     public String get(String file) {
         Objects.requireNonNull(file);
-        
+
         String hash = table.get(file);
         if (hash == null) {
             hash = marks.get(file);
         }
-        
+
         return hash;
     }
-    
+
     public List<String> getUnmarked() {
         return new ArrayList<>(table.keySet());
     }
-    
+
     public String putAndMark(String path, String hash) {
         Objects.requireNonNull(path);
         Objects.requireNonNull(hash);
-        
+
         String oldTableHash = table.remove(path);
         String oldMarksHash = marks.put(path, hash);
         assert !(oldTableHash != null && oldMarksHash != null);
@@ -157,10 +157,10 @@ public class HashDatabase implements Closeable {
             return oldMarksHash;
         }
     }
-    
+
     public String mark(String file) {
         Objects.requireNonNull(file);
-        
+
         String hash = table.remove(file);
         if (hash != null) {
             marks.put(file, hash);
@@ -169,20 +169,20 @@ public class HashDatabase implements Closeable {
             return marks.get(file);
         }
     }
-    
+
     public String remove(String file) {
         Objects.requireNonNull(file);
-        
+
         String hash = table.remove(file);
         if (hash == null) {
             hash = marks.remove(file);
         }
-        
+
         return hash;
     }
-    
+
     public void removeUnmarked() {
         table.clear();
     }
-    
+
 }

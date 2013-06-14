@@ -35,23 +35,23 @@ import joptsimple.OptionSpec;
 public class Configuration {
 
     private static final Configuration instance = new Configuration();
-    
+
     public AbstractOperationMode mode = null;
     public Path path = null;
-    
+
     private Configuration() {
     }
 
     public static Configuration getInstance() {
         return instance;
     }
-    
+
     public void parseArgumens(String[] args) throws NoSuchAlgorithmException, IOException {
         // Build our parser
         OptionParser parser = new OptionParser();
         OptionSpec<Path> hashDatabaseArg = parser.accepts("f").withRequiredArg().withValuesConvertedBy(new PathConverter()).defaultsTo(Paths.get(HashDatabase.FILENAME));
         OptionSpec<Path> exceptionDatabaseArg = parser.accepts("e").withRequiredArg().withValuesConvertedBy(new PathConverter());
-        
+
         // Parse arguments
         OptionSet options = parser.parse(args);
 
@@ -87,7 +87,7 @@ public class Configuration {
         } else {
             throw new OptionException("Unknown operation mode: " + nonOptionArgs.get(0));
         }
-        
+
         // Get the path
         if (nonOptionArgs.size() == 2) {
             path = Paths.get(nonOptionArgs.get(1)).normalize();

@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 public class IndexingMode extends AbstractOperationMode {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexingMode.class);
-    
+
     public IndexingMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
         super(hashFile, exceptionFile);
     }
-    
+
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Objects.requireNonNull(file);
@@ -51,7 +51,7 @@ public class IndexingMode extends AbstractOperationMode {
             hashDatabase.putAndMark(file.toString(), hash);
             logger.info("{} {}", NEW, file.toString());
         }
-        
+
         return FileVisitResult.CONTINUE;
     }
 

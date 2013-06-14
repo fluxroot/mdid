@@ -43,7 +43,7 @@ public class AnalysisMode extends AbstractOperationMode {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Objects.requireNonNull(file);
         Objects.requireNonNull(attrs);
-        
+
         if (exceptionDatabase.contains(file.toString())) {
             logger.info("{} {}", SKIPPING, file.toString());
         } else {

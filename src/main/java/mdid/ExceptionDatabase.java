@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
 public class ExceptionDatabase {
 
     private static final Logger logger = LoggerFactory.getLogger(ExceptionDatabase.class);
-    
+
     private ArrayList<String> table = new ArrayList<>();
 
     public ExceptionDatabase() {
         // Create an empty database
     }
-    
+
     public ExceptionDatabase(Path exceptionFile) throws IOException {
         Objects.requireNonNull(exceptionFile);
 
@@ -56,10 +56,10 @@ public class ExceptionDatabase {
                     table.add(line);
                     ++count;
                 }
-                
+
                 line = bufferedReader.readLine();
             }
-            
+
             logger.info("Read {} entries from exception file", count);
         }
     }
@@ -69,10 +69,10 @@ public class ExceptionDatabase {
 
         return table.contains(file);
     }
-    
+
     public void put(String file) {
         Objects.requireNonNull(file);
-        
+
         table.add(file);
     }
 

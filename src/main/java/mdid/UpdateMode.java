@@ -38,12 +38,12 @@ public class UpdateMode extends AbstractOperationMode {
     public UpdateMode(Path hashFile, Path exceptionFile) throws IOException, NoSuchAlgorithmException {
         super(hashFile, exceptionFile, true);
     }
-    
+
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Objects.requireNonNull(file);
         Objects.requireNonNull(attrs);
-        
+
         if (exceptionDatabase.contains(file.toString())) {
             logger.info("{} {}", SKIPPING, file.toString());
         } else {
@@ -67,7 +67,7 @@ public class UpdateMode extends AbstractOperationMode {
         }
 
         hashDatabase.removeUnmarked();
-        
+
         super.doFinal();
     }
 

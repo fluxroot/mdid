@@ -36,12 +36,12 @@ public class HashDatabaseTest {
 
     private static Path tempDirectory = null;
     private Path hashFile = null;
-    
+
     @BeforeClass
     public static void beforeClass() throws IOException {
         tempDirectory = Files.createTempDirectory("mdid");
     }
-    
+
     @AfterClass
     public static void afterClass() throws IOException {
         Files.delete(tempDirectory);
@@ -51,12 +51,12 @@ public class HashDatabaseTest {
     public void before() {
         hashFile = tempDirectory.resolve("mdid.db");
     }
-    
+
     @After
     public void after() throws IOException {
         Files.deleteIfExists(hashFile);
     }
-    
+
     @Test
     public void testReadOnly() throws IOException {
         // Initialize database
@@ -74,7 +74,7 @@ public class HashDatabaseTest {
             Assert.assertNull(database.get("another/path"));
         }
     }
-    
+
     @Test
     public void testWritable() throws IOException {
         // Initialize database
@@ -102,11 +102,11 @@ public class HashDatabaseTest {
 
         try (HashDatabase database = new HashDatabase(hashFile, false)) {
             Assert.assertEquals("1234", database.get("a/path"));
-            
+
             database.mark("a/path");
             database.removeUnmarked();
             Assert.assertNull(database.get("another/path"));
-            
+
             database.remove("a/path");
             Assert.assertNull(database.get("a/path"));
         }

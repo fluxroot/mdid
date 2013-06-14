@@ -35,26 +35,26 @@ import org.junit.Test;
 public class ExceptionDatabaseTest {
 
     private static Path exceptionFile = null;
-    
+
     @BeforeClass
     public static void beforeClass() throws IOException {
         exceptionFile = Files.createTempFile("mdid", null);
-        
+
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(exceptionFile, Charset.defaultCharset())) {
             bufferedWriter.write("a/path");
             bufferedWriter.newLine();
         }
     }
-    
+
     @AfterClass
     public static void afterClass() throws IOException {
         Files.delete(exceptionFile);
     }
-    
+
     @Test
     public void testExceptionDatabase() throws IOException {
         ExceptionDatabase database = new ExceptionDatabase(exceptionFile);
         Assert.assertTrue(database.contains("a/path"));
     }
-    
+
 }

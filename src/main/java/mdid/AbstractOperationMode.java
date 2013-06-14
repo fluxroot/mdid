@@ -38,87 +38,87 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractOperationMode extends SimpleFileVisitor<Path> {
 
-	protected static final String SKIPPING = "SKIPPING";
-	protected static final String NEW =      "NEW     ";
-	protected static final String EQUAL=     "EQUAL   ";
-	protected static final String MODIFIED = "MODIFIED";
-	protected static final String DELETED =  "DELETED ";
-	
-	private static final Logger logger = LoggerFactory.getLogger(AbstractOperationMode.class);
-	
-	protected final HashDatabase hashDatabase;
-	protected final ExceptionDatabase exceptionDatabase;
-	private final MessageDigest messageDigest;
+    protected static final String SKIPPING = "SKIPPING";
+    protected static final String NEW =      "NEW     ";
+    protected static final String EQUAL =    "EQUAL   ";
+    protected static final String MODIFIED = "MODIFIED";
+    protected static final String DELETED =  "DELETED ";
 
-	public AbstractOperationMode(Path hashFile, Path exceptionFile) throws NoSuchAlgorithmException, IOException {
-		Objects.requireNonNull(hashFile);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractOperationMode.class);
 
-		hashDatabase = new HashDatabase(hashFile);
-		
-		if (exceptionFile == null) {
-			exceptionDatabase = new ExceptionDatabase();
-		} else {
-			exceptionDatabase = new ExceptionDatabase(exceptionFile);
-			exceptionDatabase.put(exceptionFile.toString());
-		}
-		
-		exceptionDatabase.put(hashFile.toString());
+    protected final HashDatabase hashDatabase;
+    protected final ExceptionDatabase exceptionDatabase;
+    private final MessageDigest messageDigest;
 
-		messageDigest = MessageDigest.getInstance(HashDatabase.MESSAGEDIGEST);
-	}
+    public AbstractOperationMode(Path hashFile, Path exceptionFile) throws NoSuchAlgorithmException, IOException {
+        Objects.requireNonNull(hashFile);
 
-	public AbstractOperationMode(Path hashFile, Path exceptionFile, boolean writable) throws NoSuchAlgorithmException, IOException {
-		Objects.requireNonNull(hashFile);
+        hashDatabase = new HashDatabase(hashFile);
 
-		hashDatabase = new HashDatabase(hashFile, writable);
+        if (exceptionFile == null) {
+            exceptionDatabase = new ExceptionDatabase();
+        } else {
+            exceptionDatabase = new ExceptionDatabase(exceptionFile);
+            exceptionDatabase.put(exceptionFile.toString());
+        }
 
-		if (exceptionFile == null) {
-			exceptionDatabase = new ExceptionDatabase();
-		} else {
-			exceptionDatabase = new ExceptionDatabase(exceptionFile);
-			exceptionDatabase.put(exceptionFile.toString());
-		}
-		
-		exceptionDatabase.put(hashFile.toString());
+        exceptionDatabase.put(hashFile.toString());
 
-		messageDigest = MessageDigest.getInstance(HashDatabase.MESSAGEDIGEST);
-	}
+        messageDigest = MessageDigest.getInstance(HashDatabase.MESSAGEDIGEST);
+    }
 
-	@Override
-	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-		Objects.requireNonNull(dir);
-		Objects.requireNonNull(attrs);
+    public AbstractOperationMode(Path hashFile, Path exceptionFile, boolean writable) throws NoSuchAlgorithmException, IOException {
+        Objects.requireNonNull(hashFile);
 
-		if (exceptionDatabase.contains(dir.toString())) {
-			logger.info("{} {}", SKIPPING, dir.toString());
-			return FileVisitResult.SKIP_SUBTREE;
-		} else {
-			return FileVisitResult.CONTINUE;
-		}
-	}
-	
-	protected String getHash(Path file) throws IOException {
-		Objects.requireNonNull(file);
+        hashDatabase = new HashDatabase(hashFile, writable);
 
-		try (DigestInputStream digestInputStream = new DigestInputStream(new FileInputStream(file.toFile()), messageDigest)) {
-			byte[] buffer = new byte[1024];
-			while (digestInputStream.read(buffer) != -1) {
-			}
-			
-			byte[] hashValue = messageDigest.digest();
-			BigInteger bi = new BigInteger(1, hashValue);
-			String hash = String.format("%0" + (hashValue.length << 1) + "x", bi);
-			
-			return hash;
-		}
-	}
+        if (exceptionFile == null) {
+            exceptionDatabase = new ExceptionDatabase();
+        } else {
+            exceptionDatabase = new ExceptionDatabase(exceptionFile);
+            exceptionDatabase.put(exceptionFile.toString());
+        }
 
-	public void doFinal() {
-		try {
-			hashDatabase.close();
-		} catch (IOException e) {
-			logger.warn("Cannot close hash database");
-		}
-	}
+        exceptionDatabase.put(hashFile.toString());
+
+        messageDigest = MessageDigest.getInstance(HashDatabase.MESSAGEDIGEST);
+    }
+
+    @Override
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        Objects.requireNonNull(dir);
+        Objects.requireNonNull(attrs);
+
+        if (exceptionDatabase.contains(dir.toString())) {
+            logger.info("{} {}", SKIPPING, dir.toString());
+            return FileVisitResult.SKIP_SUBTREE;
+        } else {
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
+    protected String getHash(Path file) throws IOException {
+        Objects.requireNonNull(file);
+
+        try (DigestInputStream digestInputStream = new DigestInputStream(new FileInputStream(file.toFile()), messageDigest)) {
+            byte[] buffer = new byte[1024];
+            while (digestInputStream.read(buffer) != -1) {
+            }
+
+            byte[] hashValue = messageDigest.digest();
+            BigInteger bi = new BigInteger(1, hashValue);
+            String hash = String.format("%0" + (hashValue.length << 1) + "x", bi);
+
+            return hash;
+        }
+    }
+
+    public void doFinal() {
+        try {
+            hashDatabase.close();
+        } catch (IOException e) {
+            logger.warn("Cannot close hash database");
+        }
+    }
 
 }

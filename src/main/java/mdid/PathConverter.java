@@ -28,19 +28,19 @@ import joptsimple.ValueConverter;
  */
 public class PathConverter implements ValueConverter<Path> {
 
-	@Override
-	public Path convert(String value) {
-		return Paths.get(value);
-	}
+    @Override
+    public Path convert(String value) {
+        return Paths.get(value);
+    }
 
-	@Override
-	public Class<Path> valueType() {
-		return Path.class;
-	}
+    @Override
+    public Class<Path> valueType() {
+        return Path.class;
+    }
 
-	@Override
-	public String valuePattern() {
-		return null;
-	}
+    @Override
+    public String valuePattern() {
+        return null;
+    }
 
 }

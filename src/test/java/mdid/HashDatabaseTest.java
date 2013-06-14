@@ -34,82 +34,82 @@ import org.junit.Test;
  */
 public class HashDatabaseTest {
 
-	private static Path tempDirectory = null;
-	private Path hashFile = null;
-	
-	@BeforeClass
-	public static void beforeClass() throws IOException {
-		tempDirectory = Files.createTempDirectory("mdid");
-	}
-	
-	@AfterClass
-	public static void afterClass() throws IOException {
-		Files.delete(tempDirectory);
-	}
+    private static Path tempDirectory = null;
+    private Path hashFile = null;
 
-	@Before
-	public void before() {
-		hashFile = tempDirectory.resolve("mdid.db");
-	}
-	
-	@After
-	public void after() throws IOException {
-		Files.deleteIfExists(hashFile);
-	}
-	
-	@Test
-	public void testReadOnly() throws IOException {
-		// Initialize database
-		try (HashDatabase database = new HashDatabase(hashFile)) {
-			database.putAndMark("a/path", "1234");
-		}
+    @BeforeClass
+    public static void beforeClass() throws IOException {
+        tempDirectory = Files.createTempDirectory("mdid");
+    }
 
-		// Reopen database read only
-		try (HashDatabase database = new HashDatabase(hashFile, false)) {
-			database.putAndMark("another/path", "5678");
-		}
+    @AfterClass
+    public static void afterClass() throws IOException {
+        Files.delete(tempDirectory);
+    }
 
-		// Check database
-		try (HashDatabase database = new HashDatabase(hashFile, false)) {
-			Assert.assertNull(database.get("another/path"));
-		}
-	}
-	
-	@Test
-	public void testWritable() throws IOException {
-		// Initialize database
-		try (HashDatabase database = new HashDatabase(hashFile)) {
-			database.putAndMark("a/path", "1234");
-		}
+    @Before
+    public void before() {
+        hashFile = tempDirectory.resolve("mdid.db");
+    }
 
-		// Reopen database writable
-		try (HashDatabase database = new HashDatabase(hashFile, true)) {
-			database.putAndMark("another/path", "5678");
-		}
+    @After
+    public void after() throws IOException {
+        Files.deleteIfExists(hashFile);
+    }
 
-		// Check database
-		try (HashDatabase database = new HashDatabase(hashFile, false)) {
-			Assert.assertNotNull(database.get("another/path"));
-		}
-	}
+    @Test
+    public void testReadOnly() throws IOException {
+        // Initialize database
+        try (HashDatabase database = new HashDatabase(hashFile)) {
+            database.putAndMark("a/path", "1234");
+        }
 
-	@Test
-	public void testHashDatabase() throws IOException {
-		try (HashDatabase database = new HashDatabase(hashFile)) {
-			database.putAndMark("a/path", "1234");
-			database.putAndMark("another/path", "5678");
-		}
+        // Reopen database read only
+        try (HashDatabase database = new HashDatabase(hashFile, false)) {
+            database.putAndMark("another/path", "5678");
+        }
 
-		try (HashDatabase database = new HashDatabase(hashFile, false)) {
-			Assert.assertEquals("1234", database.get("a/path"));
-			
-			database.mark("a/path");
-			database.removeUnmarked();
-			Assert.assertNull(database.get("another/path"));
-			
-			database.remove("a/path");
-			Assert.assertNull(database.get("a/path"));
-		}
-	}
+        // Check database
+        try (HashDatabase database = new HashDatabase(hashFile, false)) {
+            Assert.assertNull(database.get("another/path"));
+        }
+    }
+
+    @Test
+    public void testWritable() throws IOException {
+        // Initialize database
+        try (HashDatabase database = new HashDatabase(hashFile)) {
+            database.putAndMark("a/path", "1234");
+        }
+
+        // Reopen database writable
+        try (HashDatabase database = new HashDatabase(hashFile, true)) {
+            database.putAndMark("another/path", "5678");
+        }
+
+        // Check database
+        try (HashDatabase database = new HashDatabase(hashFile, false)) {
+            Assert.assertNotNull(database.get("another/path"));
+        }
+    }
+
+    @Test
+    public void testHashDatabase() throws IOException {
+        try (HashDatabase database = new HashDatabase(hashFile)) {
+            database.putAndMark("a/path", "1234");
+            database.putAndMark("another/path", "5678");
+        }
+
+        try (HashDatabase database = new HashDatabase(hashFile, false)) {
+            Assert.assertEquals("1234", database.get("a/path"));
+
+            database.mark("a/path");
+            database.removeUnmarked();
+            Assert.assertNull(database.get("another/path"));
+
+            database.remove("a/path");
+            Assert.assertNull(database.get("a/path"));
+        }
+    }
 
 }

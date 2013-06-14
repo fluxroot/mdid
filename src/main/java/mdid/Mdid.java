@@ -28,20 +28,23 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Phokham Nonava
  */
-public class Mdid {
+public final class Mdid {
 
-	private static final Logger logger = LoggerFactory.getLogger(Mdid.class);
+    private static final Logger logger = LoggerFactory.getLogger(Mdid.class);
 
-	public static void main(String[] args) {
-		try {
-			Configuration.getInstance().parseArgumens(args);
+    private Mdid() {
+    }
 
-			AbstractOperationMode mode = Configuration.getInstance().mode;
-			Files.walkFileTree(Configuration.getInstance().path, mode);
-			mode.doFinal();
-		} catch (NoSuchAlgorithmException | IOException e) {
-			logger.error("An error occured: {}", e.getLocalizedMessage());
-		}
-	}
+    public static void main(String[] args) {
+        try {
+            Configuration.getInstance().parseArgumens(args);
+
+            AbstractOperationMode mode = Configuration.getInstance().mode;
+            Files.walkFileTree(Configuration.getInstance().path, mode);
+            mode.doFinal();
+        } catch (NoSuchAlgorithmException | IOException e) {
+            logger.error("An error occured: {}", e.getLocalizedMessage());
+        }
+    }
 
 }

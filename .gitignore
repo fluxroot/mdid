@@ -13,3 +13,8 @@ run/
 .settings/
 bin/
 .classpath
+.project
+
+# IntelliJ IDEA
+.idea/
+*.iml

@@ -1,4 +1,4 @@
-Message Digest Integrity Database [![Build Status](https://travis-ci.org/fluxroot/mdid.png)](https://travis-ci.org/fluxroot/mdid)
+Message Digest Integrity Database [![Build Status](https://travis-ci.org/fluxroot/mdid.png)](https://travis-ci.org/fluxroot/mdid)[![Coverage Status](https://coveralls.io/repos/fluxroot/mdid/badge.png)](https://coveralls.io/r/fluxroot/mdid)
 =================================
 
 Copyright 2012 Phokham Nonava <pn@nonava.com>
